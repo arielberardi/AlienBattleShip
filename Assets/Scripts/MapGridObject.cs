@@ -8,7 +8,8 @@ public class MapGridObject
     private int _y;
     private Grid2D<MapGridObject> _grid;
     
-    private bool _isEmpty = false;
+    private bool _isFull = false;
+    private bool _isOverlay = false;
     
     public MapGridObject(Grid2D<MapGridObject> grid, int x, int y)
     {
@@ -17,18 +18,35 @@ public class MapGridObject
         _grid = grid;
     }
     
-    private void SetEmpty(bool value)
+    public void SetFull(bool value)
     {
-        _isEmpty = value;
+        _isFull = value;
+        TriggerUpdateGrid();
     }
     
-    private bool GetIsEmpty()
+    public bool GetIsFull()
     {
-        return _isEmpty;
+        return _isFull;
+    }
+    
+    public void SetOverlay(bool value)
+    {
+        _isOverlay = value;
+        TriggerUpdateGrid();
+    }
+    
+    public bool GetIsOverlay()
+    {
+        return _isOverlay;
     }
     
     public override string ToString()
     {
-        return "(" + _x + "," + _y + "," + _isEmpty.ToString() + ")";
+        return "(" + _x + "," + _y + "," + _isOverlay.ToString() + ")";
+    }
+    
+    private void TriggerUpdateGrid()
+    {
+        _grid.TriggerGridObjectChanged(_x, _y);
     }
 };

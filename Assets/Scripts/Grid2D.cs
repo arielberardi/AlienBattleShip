@@ -111,17 +111,17 @@ public class Grid2D<TGridObject>
     public class OnGridObjectChangedArgs {
         public int x;
         public int y;
-    }
+    };
     
     private int _width;
     private int _height;
     private float _cellSize;
-    private TGridObject[,] _cells;
+    private TGridObject[,] _cellArray;
     
     private Vector3 _originPosition;
     private TextMesh[,] _debugTextArray;
     
-    private bool _isDebugEnabled = true;
+    private bool _isDebugEnabled = false;
 
     public Grid2D(int width, int height, float cellSize, Vector3 position, Func<Grid2D<TGridObject>, int, int, TGridObject> createObject)
     {
@@ -132,12 +132,12 @@ public class Grid2D<TGridObject>
     
         OnGridObjectChanged = new UnityEvent<OnGridObjectChangedArgs>();
         
-        _cells = new TGridObject[_width, _height];
+        _cellArray = new TGridObject[_width, _height];
         for (int x = 0; x < _width; x++)
         {
             for (int y = 0; y < _height; y++)
             {
-                _cells[x, y] = createObject(this, x, y);
+                _cellArray[x, y] = createObject(this, x, y);
             }
         }
         
@@ -150,7 +150,7 @@ public class Grid2D<TGridObject>
                 for (int y = 0; y < _height; y++)
                 {
                     Vector3 centerPosition = GetWorldPosition(x, y) + new Vector3(_cellSize / 2, _cellSize / 2, 0);
-                    _debugTextArray[x, y] = CreateDefaultWorldText(_cells[x, y].ToString(), centerPosition);
+                    _debugTextArray[x, y] = CreateDefaultWorldText(_cellArray[x, y].ToString(), centerPosition);
                     
                     Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x, y + 1), Color.white, 100f);
                     Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x + 1, y), Color.white, 100f);
@@ -161,7 +161,7 @@ public class Grid2D<TGridObject>
             Debug.DrawLine(GetWorldPosition(width, 0), GetWorldPosition(width, height), Color.white, 100f);
             
             OnGridObjectChanged.AddListener((OnGridObjectChangedArgs eventArgs) => {
-                _debugTextArray[eventArgs.x, eventArgs.y].text = _cells[eventArgs.x, eventArgs.y]?.ToString();
+                _debugTextArray[eventArgs.x, eventArgs.y].text = _cellArray[eventArgs.x, eventArgs.y]?.ToString();
             });
         }
     }
@@ -183,6 +183,12 @@ public class Grid2D<TGridObject>
         return new Vector3(x, y) * _cellSize + _originPosition;
     }
     
+    public Vector3 GetWorldPositionCenter(int x, int y)
+    {
+        return new Vector3(x, y) * _cellSize + _originPosition + new Vector3(_cellSize/2, _cellSize/2);
+    }
+    
+    
     public void GetGridObjectPosition(Vector3 position, out int x, out int y)
     {
         x = Mathf.FloorToInt((position - _originPosition).x / _cellSize);
@@ -196,13 +202,13 @@ public class Grid2D<TGridObject>
             return;     
         }
         
-        _cells[x, y] = value;
+        _cellArray[x, y] = value;
         
         TriggerGridObjectChanged(x, y);
 
         if (_isDebugEnabled)
         {
-            _debugTextArray[x, y].text = _cells[x, y].ToString();
+            _debugTextArray[x, y].text = _cellArray[x, y].ToString();
         }
     }
 
@@ -220,7 +226,7 @@ public class Grid2D<TGridObject>
             return default(TGridObject);
         }
         
-        return _cells[x, y];
+        return _cellArray[x, y];
     }
 
     public TGridObject GetGridObject(Vector3 worldPosition)

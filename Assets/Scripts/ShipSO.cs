@@ -8,5 +8,5 @@ public class ShipSO : ScriptableObject
     public int width;
     public int height;
     public int resistence;
-    public Transform prefab;
+    public GameObject prefab;
 }
