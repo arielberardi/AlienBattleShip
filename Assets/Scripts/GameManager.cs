@@ -8,7 +8,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private int _height = 10;
     [SerializeField] private float _cellSize = 1f;
     [SerializeField] private Vector2 _origin;
-    [SerializeField] private ShipSO _shipSO;
+    [SerializeField] private GameObject _shipPrefab;
     
     [SerializeField] private MapGridVisual _mapGridVisual;
     [SerializeField] private ShipSnapSystem _shipSnapSystem;
@@ -32,93 +32,17 @@ public class GameManager : MonoBehaviour
         _shipSnapSystem.Setup(_grid);
     }
     
-    
-    // TODO:
-    // Refactor removes SO and uses prefab instead with generic script
-    // Refactor Rotation/Direction forward of with and height
-        // Rotation will be handled by the prefab
-        // Direction will be returned by the prefab (make no senses to keep using a SO)
-    // Refactor Height/Width calculation to gridplaces
-        // Depending on direction will calculate which places the object will fill
-        // We update those fill places or we return if object can't be placed
-        // This will be a logic inside the ShipSnapSystem
-        // GameManager will pass the expected object to be used
-        
-    GameObject ship = null;
-    bool objectGrabbed = false;
-    int rotationCount = 1;
-
     // Update is called once per frame
     private void Update()
     {
         UpdateOverlayedCell();
-
-        Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        Vector3 prefabPosition = new Vector3(mousePosition.x, mousePosition.y, 0);
-        
-        if (!objectGrabbed && Input.GetMouseButtonDown(0))
-        {
-            ship = Instantiate(_shipSO.prefab, prefabPosition, Quaternion.identity);
-            objectGrabbed = true;
-        }
-        
-        if (ship != null && objectGrabbed)
-        {
-            int x, y;
-            _grid.GetGridObjectPosition(prefabPosition, out x, out y);
-            MapGridObject currentGridObject = _grid.GetGridObject(x, y);
-            
-            if (currentGridObject != null)
-            {
-                ship.transform.position = _grid.GetWorldPositionCenter(x, y);
-            }   
-            
-            if (Input.GetKeyDown(KeyCode.R))
-            {
-                ship.transform.Rotate(0, 0, 90f);
-            }
-
-            if (Input.GetMouseButtonDown(1))
-            {                
-                if (currentGridObject == null)
-                {
-                    Destroy(ship);
-                    objectGrabbed = false;
-                }
-                else
-                {
-                    bool canBePlaced = true;
-                    
-                    // The check of posible grids must be done depending on current forward Direction
-                    for (int i = 0; i < _shipSO.height; i++)
-                    {
-                        MapGridObject nextGridObject = _grid.GetGridObject(x, y + i);
-                        if (nextGridObject == null || nextGridObject.GetIsFull())
-                        {
-                            canBePlaced = false;
-                        }
-                    }
-
-                    if (canBePlaced)
-                    {
-                        objectGrabbed = false;
-                        
-                        for (int i = 0; i < _shipSO.height; i++)
-                        {
-                            _grid.GetGridObject(x, y + i).SetFull(true);
-                        }
-                        
-                        Debug.Log("New position full: (" + x + "," + y + ")");
-                    }
-                    else
-                    {
-                        Debug.Log("Grid position full or null: (" + x + "," + y + ")");
-                    }
-                }
-            }
-        }
+        UpdateShipPosition();
     }
     
+    
+    // TODO: Refactor so it can match the size of current ship and improve shaders to make the 
+    // grid sprite luminated
+    // It may need all toghether in the ShipSnapSystem
     private void UpdateOverlayedCell()
     {
         Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -135,6 +59,24 @@ public class GameManager : MonoBehaviour
         {
             _lastGridObjectOverlayed?.SetOverlay(false);
             _lastGridObjectOverlayed = null;
+        }
+    }
+    
+    private void UpdateShipPosition()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            _shipSnapSystem.Grab(_shipPrefab);
+        }
+        
+        if (Input.GetMouseButtonDown(1))
+        {
+            _shipSnapSystem.Place();
+        }
+        
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            _shipSnapSystem.Rotate();
         }
     }
 }

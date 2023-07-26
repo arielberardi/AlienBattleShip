@@ -183,16 +183,34 @@ public class Grid2D<TGridObject>
         return new Vector3(x, y) * _cellSize + _originPosition;
     }
     
+    public Vector3 GetWorldPosition(Vector2Int gridPosition)
+    {
+        return GetWorldPosition(gridPosition.x, gridPosition.y);   
+    }
+    
     public Vector3 GetWorldPositionCenter(int x, int y)
     {
         return new Vector3(x, y) * _cellSize + _originPosition + new Vector3(_cellSize/2, _cellSize/2);
     }
     
-    
-    public void GetGridObjectPosition(Vector3 position, out int x, out int y)
+    public Vector3 GetWorldPositionCenter(Vector2Int gridPosition)
     {
-        x = Mathf.FloorToInt((position - _originPosition).x / _cellSize);
-        y = Mathf.FloorToInt((position - _originPosition).y / _cellSize);
+        return GetWorldPositionCenter(gridPosition.x, gridPosition.y);   
+    }
+    
+    public void GetGridObjectPosition(Vector3 worldPosition, out int x, out int y)
+    {
+        Vector2Int gridPosition = GetGridObjectPosition(worldPosition);
+        x = gridPosition.x;
+        y = gridPosition.y; 
+    }
+    
+    public Vector2Int GetGridObjectPosition(Vector3 worldPosition)
+    {
+        return new Vector2Int(
+            Mathf.FloorToInt((worldPosition - _originPosition).x / _cellSize), 
+            Mathf.FloorToInt((worldPosition - _originPosition).y / _cellSize)
+        );
     }
     
     public void SetGridObject(int x, int y, TGridObject value)
@@ -211,12 +229,15 @@ public class Grid2D<TGridObject>
             _debugTextArray[x, y].text = _cellArray[x, y].ToString();
         }
     }
+    
+    public void SetGridObject(Vector2Int gridPosition, TGridObject value)
+    {
+        SetGridObject(gridPosition.x, gridPosition.y, value);
+    }
 
     public void SetGridObject(Vector3 worldPosition, TGridObject value)
     {
-        int x, y;
-        GetGridObjectPosition(worldPosition, out x, out y);
-        SetGridObject(x, y, value);
+        SetGridObject(GetGridObjectPosition(worldPosition), value);
     }
     
     public TGridObject GetGridObject(int x, int y)
@@ -229,16 +250,24 @@ public class Grid2D<TGridObject>
         return _cellArray[x, y];
     }
 
+    public TGridObject GetGridObject(Vector2Int gridPosition)
+    {
+        return GetGridObject(gridPosition.x, gridPosition.y);
+    }
+
     public TGridObject GetGridObject(Vector3 worldPosition)
     {
-        int x, y;
-        GetGridObjectPosition(worldPosition, out x, out y);
-        return GetGridObject(x, y);
+        return GetGridObject(GetGridObjectPosition(worldPosition));
     }
     
     public void TriggerGridObjectChanged(int x, int y)
     {
         OnGridObjectChanged.Invoke(new OnGridObjectChangedArgs { x = x, y = y });
+    }
+    
+    public void TriggerGridObjectChanged(Vector2Int gridPosition)
+    {
+        TriggerGridObjectChanged(gridPosition.x, gridPosition.y);
     }
     
     private TextMesh CreateWorldText(string text, Vector3 position, int fontSize, TextAlignment alignment, Color color)

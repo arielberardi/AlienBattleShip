@@ -40,6 +40,17 @@ public class MapGridObject
         return _isOverlay;
     }
     
+    public void GetGridPosition(out int x, out int y)
+    {
+        x = _x;
+        y = _y;
+    }
+    
+    public Vector2Int GetGridPosition()
+    {
+        return new Vector2Int(_x, _y);
+    }
+    
     public override string ToString()
     {
         return "(" + _x + "," + _y + "," + _isOverlay.ToString() + ")";
