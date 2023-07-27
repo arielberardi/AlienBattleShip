@@ -121,8 +121,10 @@ public class Grid2D<TGridObject>
     private Vector3 _originPosition;
     private TextMesh[,] _debugTextArray;
     
-    private bool _isDebugEnabled = false;
+    private bool _isDebugEnabled = false; // Enable to preview the grid on the screen using Debug.DrawLine and Text
 
+    // This constructor is expected to received a function of the TGridObject to use 
+    // Signature: TGridObject (Grid2D<TGridObject> g, int x, int y)
     public Grid2D(int width, int height, float cellSize, Vector3 position, Func<Grid2D<TGridObject>, int, int, TGridObject> createObject)
     {
         _width = width;
@@ -141,6 +143,8 @@ public class Grid2D<TGridObject>
             }
         }
         
+        // This is only for debug purposes
+        // It will draw lines and text for each cell
         if (_isDebugEnabled)
         {
             _debugTextArray = new TextMesh[_width, _height];
@@ -222,12 +226,12 @@ public class Grid2D<TGridObject>
         
         _cellArray[x, y] = value;
         
-        TriggerGridObjectChanged(x, y);
-
         if (_isDebugEnabled)
         {
             _debugTextArray[x, y].text = _cellArray[x, y].ToString();
         }
+        
+        TriggerGridObjectChanged(x, y);
     }
     
     public void SetGridObject(Vector2Int gridPosition, TGridObject value)
@@ -270,6 +274,7 @@ public class Grid2D<TGridObject>
         TriggerGridObjectChanged(gridPosition.x, gridPosition.y);
     }
     
+    // Create World Text on the world space just for debug purposes
     private TextMesh CreateWorldText(string text, Vector3 position, int fontSize, TextAlignment alignment, Color color)
     {
         GameObject gameObject = new GameObject("World_Text", typeof(TextMesh));

@@ -30,7 +30,7 @@ public class MapGridVisual : MonoBehaviour
         
         UpdateCells();
     } 
-    
+
     private void Update()
     {
         if (_requiresUpdate)

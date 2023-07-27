@@ -53,7 +53,7 @@ public class MapGridObject
     
     public override string ToString()
     {
-        return "(" + _x + "," + _y + "," + _isOverlay.ToString() + ")";
+        return "(" + _x + "," + _y + "," + _isOverlay.ToString() + "," + _isFull.ToString() + ")";
     }
     
     private void TriggerUpdateGrid()

@@ -167,7 +167,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe27616683a0249b8a1883c4a804e061, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _shipSO: {fileID: 11400000, guid: fcf30f6b56bb1433a94e643858f1d9d0, type: 2}
 --- !u!1 &414121355
 GameObject:
   m_ObjectHideFlags: 0
@@ -201,7 +200,11 @@ MonoBehaviour:
   _height: 10
   _cellSize: 10
   _origin: {x: -50, y: -50}
-  _shipPrefab: {fileID: 3949413020629734263, guid: d91ef538eb406480293d91bc9e5b4db8, type: 3}
+  _shipPrefabArray:
+  - {fileID: 3949413020629734263, guid: d91ef538eb406480293d91bc9e5b4db8, type: 3}
+  - {fileID: 3949413020629734263, guid: 3ef9d26d7e877483fa4c15a22cbaa35d, type: 3}
+  - {fileID: 3949413020629734263, guid: 2ee44429267fd427d9f608f89da7ff15, type: 3}
+  - {fileID: 3949413020629734263, guid: aef1e36a5cbd34654ab097a2d66dc222, type: 3}
   _mapGridVisual: {fileID: 1622469375}
   _shipSnapSystem: {fileID: 233493912}
 --- !u!4 &414121357

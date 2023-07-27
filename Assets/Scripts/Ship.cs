@@ -94,14 +94,14 @@ public class Ship : MonoBehaviour
             case Direction.Left:
                 for (int x = 0; x < _height; x++) {
                     for (int y = 0; y < _width; y++) {
-                        gridPositionList.Add(offset - new Vector2Int(x, y));
+                        gridPositionList.Add(offset - new Vector2Int(x, -y));
                     }
                 }
                 break;
             case Direction.Right:
                 for (int x = 0; x < _height; x++) {
                     for (int y = 0; y < _width; y++) {
-                        gridPositionList.Add(offset + new Vector2Int(x, y));
+                        gridPositionList.Add(offset + new Vector2Int(x, -y));
                     }
                 }
                 break;

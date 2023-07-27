@@ -8,7 +8,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private int _height = 10;
     [SerializeField] private float _cellSize = 1f;
     [SerializeField] private Vector2 _origin;
-    [SerializeField] private GameObject _shipPrefab;
+    [SerializeField] private GameObject[] _shipPrefabArray;
     
     [SerializeField] private MapGridVisual _mapGridVisual;
     [SerializeField] private ShipSnapSystem _shipSnapSystem;
@@ -17,7 +17,6 @@ public class GameManager : MonoBehaviour
     
     private MapGridObject _lastGridObjectOverlayed = null;
     
-    // Start is called before the first frame update
     private void Start()
     {
         _grid = new Grid2D<MapGridObject>(
@@ -32,21 +31,28 @@ public class GameManager : MonoBehaviour
         _shipSnapSystem.Setup(_grid);
     }
     
-    // Update is called once per frame
     private void Update()
     {
         UpdateOverlayedCell();
         UpdateShipPosition();
     }
     
-    
-    // TODO: Refactor so it can match the size of current ship and improve shaders to make the 
-    // grid sprite luminated
-    // It may need all toghether in the ShipSnapSystem
     private void UpdateOverlayedCell()
     {
         Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         MapGridObject gridObjectOverlayed = _grid.GetGridObject(mousePosition);
+        
+        if (gridObjectOverlayed == null)
+        {
+            _lastGridObjectOverlayed?.SetOverlay(false);
+            _lastGridObjectOverlayed = null;
+            return;
+        }
+        
+        if (gridObjectOverlayed != null && gridObjectOverlayed.GetIsFull())
+        {
+            return;
+        }   
    
         if (gridObjectOverlayed != null && _lastGridObjectOverlayed != gridObjectOverlayed)
         {
@@ -54,29 +60,38 @@ public class GameManager : MonoBehaviour
             _lastGridObjectOverlayed?.SetOverlay(false);
             _lastGridObjectOverlayed = gridObjectOverlayed;
         }
-        
-        if (gridObjectOverlayed == null)
-        {
-            _lastGridObjectOverlayed?.SetOverlay(false);
-            _lastGridObjectOverlayed = null;
-        }
     }
     
     private void UpdateShipPosition()
     {
         if (Input.GetMouseButtonDown(0))
         {
-            _shipSnapSystem.Grab(_shipPrefab);
-        }
-        
-        if (Input.GetMouseButtonDown(1))
-        {
             _shipSnapSystem.Place();
         }
-        
+                
         if (Input.GetKeyDown(KeyCode.R))
         {
             _shipSnapSystem.Rotate();
+        }
+        
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            _shipSnapSystem.Grab(_shipPrefabArray[0]);
+        }
+        
+        if (Input.GetKeyDown(KeyCode.S))
+        {
+            _shipSnapSystem.Grab(_shipPrefabArray[1]);
+        }
+        
+        if (Input.GetKeyDown(KeyCode.D))
+        {
+            _shipSnapSystem.Grab(_shipPrefabArray[2]);
+        }
+        
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            _shipSnapSystem.Grab(_shipPrefabArray[3]);
         }
     }
 }

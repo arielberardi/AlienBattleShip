@@ -15,7 +15,6 @@ public class GridCellVisual : MonoBehaviour
         _isSelected = value;
     }
     
-    // Start is called before the first frame update
     private void Start()
     {
         _isSelected = false;

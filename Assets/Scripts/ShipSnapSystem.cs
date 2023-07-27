@@ -12,6 +12,8 @@ public class ShipSnapSystem : MonoBehaviour
     
     private GameObject _shipPrefab = null;
     private Ship _ship = null;
+    
+    private Vector2Int _lastGridPosition = new Vector2Int();
 
     public void Setup(Grid2D<MapGridObject> grid)
     {
@@ -61,7 +63,13 @@ public class ShipSnapSystem : MonoBehaviour
             {
                 foreach(Vector2Int position in gridPositionList)
                 {   
-                    _grid.GetGridObject(position).SetFull(true);
+                    MapGridObject gridObject = _grid.GetGridObject(position);
+                    
+                    if (gridObject != null)
+                    {
+                        gridObject.SetFull(true);
+                        gridObject.SetOverlay(true);
+                    }
                 }
                 
                 _ship = null;
@@ -103,7 +111,7 @@ public class ShipSnapSystem : MonoBehaviour
             return;
         }
         
-        // Create Prefab if doesn't exist before, move it if already exist
+        // Create Prefab if doesn't exist before, move it if exist
         if (_ship == null)
         {
             _ship = Instantiate(_shipPrefab, prefabPosition, Quaternion.identity).GetComponent<Ship>();
@@ -111,7 +119,12 @@ public class ShipSnapSystem : MonoBehaviour
         else
         {
             Vector2Int gridPosition = _currentGridObject.GetGridPosition();
-            _ship.Translate(_grid.GetWorldPositionCenter(gridPosition));
+            if (!gridPosition.Equals(_lastGridPosition))
+            {           
+                // TODO: Add a lerp to the movement
+                _ship.Translate(_grid.GetWorldPositionCenter(gridPosition));
+                _lastGridPosition = gridPosition;
+            }
         }
     }
 }
