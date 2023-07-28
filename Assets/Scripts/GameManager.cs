@@ -36,36 +36,10 @@ public class GameManager : MonoBehaviour
     
     private void Update()
     {
-        // UpdateOverlayedCell();
-        UpdateShipPosition();
+        ShipActions();
     }
     
-    private void UpdateOverlayedCell()
-    {
-        Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        MapGridObject gridObjectOverlayed = _grid.GetGridObject(mousePosition);
-        
-        if (gridObjectOverlayed == null)
-        {
-            _lastGridObjectOverlayed?.SetOverlay(false);
-            _lastGridObjectOverlayed = null;
-            return;
-        }
-        
-        if (gridObjectOverlayed != null && gridObjectOverlayed.GetIsFull())
-        {
-            return;
-        }   
-   
-        if (gridObjectOverlayed != null && _lastGridObjectOverlayed != gridObjectOverlayed)
-        {
-            gridObjectOverlayed.SetOverlay(true);
-            _lastGridObjectOverlayed?.SetOverlay(false);
-            _lastGridObjectOverlayed = gridObjectOverlayed;
-        }
-    }
-    
-    private void UpdateShipPosition()
+    private void ShipActions()
     {
         if (Input.GetMouseButtonDown(0))
         {

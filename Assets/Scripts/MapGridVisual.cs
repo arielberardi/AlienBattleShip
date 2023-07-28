@@ -10,6 +10,8 @@ public class MapGridVisual : MonoBehaviour
     private GameObject[,] _cellVisualArray;
     private bool _requiresUpdate;
 
+    private MapGridObject _lastGridObjectOverlayed;
+
     public void Setup(Grid2D<MapGridObject> grid)
     {
         _grid = grid;
@@ -39,6 +41,8 @@ public class MapGridVisual : MonoBehaviour
             _requiresUpdate = false;
             UpdateCells();
         }
+        
+        UpdateOverlayStatus();
     }
     
     public void Hide()
@@ -63,6 +67,11 @@ public class MapGridVisual : MonoBehaviour
         }
     }
     
+    private void Grid_OnGridObjectChanged(Grid2D<MapGridObject>.OnGridObjectChangedArgs args)
+    {
+        _requiresUpdate = true;
+    }
+    
     private void UpdateCells()
     {
         for (int x = 0; x < _grid.GetWidth(); x++)
@@ -76,11 +85,31 @@ public class MapGridVisual : MonoBehaviour
     
     private void UpdateCell(GameObject cell, MapGridObject gridObject)
     {
-        cell.GetComponent<GridCellVisual>().SetSelected(gridObject.GetIsOverlay());
+        cell.GetComponent<GridCellVisual>().SetSelected(gridObject.GetIsOverlay() || gridObject.GetIsFull());
     }
     
-    private void Grid_OnGridObjectChanged(Grid2D<MapGridObject>.OnGridObjectChangedArgs args)
+    private void UpdateOverlayStatus()
     {
-        _requiresUpdate = true;
+        Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        MapGridObject gridObjectOverlayed = _grid.GetGridObject(mousePosition);
+        
+        if (gridObjectOverlayed == null)
+        {
+            _lastGridObjectOverlayed?.SetOverlay(false);
+            _lastGridObjectOverlayed = null;
+            return;
+        }
+        
+        if (gridObjectOverlayed != null && gridObjectOverlayed.GetIsFull())
+        {
+            return;
+        }   
+   
+        if (gridObjectOverlayed != null && _lastGridObjectOverlayed != gridObjectOverlayed)
+        {
+            gridObjectOverlayed.SetOverlay(true);
+            _lastGridObjectOverlayed?.SetOverlay(false);
+            _lastGridObjectOverlayed = gridObjectOverlayed;
+        }
     }
 }
