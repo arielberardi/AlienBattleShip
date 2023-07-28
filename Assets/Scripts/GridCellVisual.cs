@@ -8,7 +8,7 @@ public class GridCellVisual : MonoBehaviour
     [SerializeField] private GameObject _selected;
     
     private bool _isSelected;
-    private bool _isLastSelectedValue = false;
+    private bool _isLastSelectedValue;
     
     public void SetSelected(bool value)
     {

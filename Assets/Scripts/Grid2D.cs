@@ -121,7 +121,7 @@ public class Grid2D<TGridObject>
     private Vector3 _originPosition;
     private TextMesh[,] _debugTextArray;
     
-    private bool _isDebugEnabled = false; // Enable to preview the grid on the screen using Debug.DrawLine and Text
+    private bool _isDebugEnabled; // Enable to preview the grid on the screen using Debug.DrawLine and Text
 
     // This constructor is expected to received a function of the TGridObject to use 
     // Signature: TGridObject (Grid2D<TGridObject> g, int x, int y)
@@ -142,6 +142,8 @@ public class Grid2D<TGridObject>
                 _cellArray[x, y] = createObject(this, x, y);
             }
         }
+        
+        _isDebugEnabled = false;
         
         // This is only for debug purposes
         // It will draw lines and text for each cell

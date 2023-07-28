@@ -8,16 +8,24 @@ public class ShipSnapSystem : MonoBehaviour
     private Grid2D<MapGridObject> _grid;
     private MapGridObject _currentGridObject;
     
-    private bool _isGrabbed = false;
+    private bool _isGrabbed;
     
-    private GameObject _shipPrefab = null;
-    private Ship _ship = null;
+    private GameObject _shipPrefab;
+    private GameObject _shipGameObject;
+    private List<GameObject> _shipGameObjectList;
+    private GameObject _parent;
+    private Ship _ship;
     
-    private Vector2Int _lastGridPosition = new Vector2Int();
+    private Vector2Int _lastGridPosition;
 
-    public void Setup(Grid2D<MapGridObject> grid)
-    {
+    public void Setup(Grid2D<MapGridObject> grid, GameObject parent)
+    {        
         _grid = grid;
+        _parent = parent;
+        
+        _shipGameObjectList = new List<GameObject>();
+        _isGrabbed = false;
+        _lastGridPosition = new Vector2Int();
     }
     
     // Set the object as grabbed for instantiate when we are over the grid
@@ -70,6 +78,8 @@ public class ShipSnapSystem : MonoBehaviour
                         gridObject.SetFull(true);
                         gridObject.SetOverlay(true);
                     }
+                    
+                    _shipGameObjectList.Add(_shipGameObject);
                 }
                 
                 _ship = null;
@@ -93,6 +103,22 @@ public class ShipSnapSystem : MonoBehaviour
         return true;
     }
     
+    public void Hide()
+    {
+        foreach(GameObject gridObject in _shipGameObjectList)
+        {
+            gridObject.SetActive(false);
+        }
+    }
+    
+    public void Show()
+    {
+        foreach(GameObject gridObject in _shipGameObjectList)
+        {
+            gridObject.SetActive(true);
+        }
+    }
+    
     private void Update()
     {   
         // We only update when we have a ship
@@ -114,7 +140,8 @@ public class ShipSnapSystem : MonoBehaviour
         // Create Prefab if doesn't exist before, move it if exist
         if (_ship == null)
         {
-            _ship = Instantiate(_shipPrefab, prefabPosition, Quaternion.identity).GetComponent<Ship>();
+            _shipGameObject = Instantiate(_shipPrefab, prefabPosition, Quaternion.identity, _parent.transform);
+            _ship = _shipGameObject.GetComponent<Ship>();
         }
         else
         {

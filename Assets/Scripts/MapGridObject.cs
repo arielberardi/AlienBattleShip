@@ -8,14 +8,17 @@ public class MapGridObject
     private int _y;
     private Grid2D<MapGridObject> _grid;
     
-    private bool _isFull = false;
-    private bool _isOverlay = false;
+    private bool _isFull;
+    private bool _isOverlay;
     
     public MapGridObject(Grid2D<MapGridObject> grid, int x, int y)
     {
         _x = x;
         _y = y;
         _grid = grid;
+        
+        _isFull = false;
+        _isOverlay = false;
     }
     
     public void SetFull(bool value)

@@ -8,15 +8,16 @@ public class MapGridVisual : MonoBehaviour
     
     private Grid2D<MapGridObject> _grid;
     private GameObject[,] _cellVisualArray;
-    private bool _requiresUpdate = false;
+    private bool _requiresUpdate;
 
     public void Setup(Grid2D<MapGridObject> grid)
     {
         _grid = grid;
         _grid.OnGridObjectChanged.AddListener(Grid_OnGridObjectChanged);
         
-        _cellVisualArray = new GameObject[_grid.GetWidth(), _grid.GetHeight()];
+        _requiresUpdate = false;
         
+        _cellVisualArray = new GameObject[_grid.GetWidth(), _grid.GetHeight()];
         for (int x = 0; x < _grid.GetWidth(); x++)
         {
             for (int y = 0; y < _grid.GetHeight(); y++)
@@ -31,12 +32,34 @@ public class MapGridVisual : MonoBehaviour
         UpdateCells();
     } 
 
-    private void Update()
+    public void Update()
     {
         if (_requiresUpdate)
         {
             _requiresUpdate = false;
             UpdateCells();
+        }
+    }
+    
+    public void Hide()
+    {
+        for (int x = 0; x < _grid.GetWidth(); x++)
+        {
+            for (int y = 0; y < _grid.GetHeight(); y++)
+            {
+                _cellVisualArray[x, y].SetActive(false);
+            }
+        }
+    }
+    
+    public void Show()
+    {
+        for (int x = 0; x < _grid.GetWidth(); x++)
+        {
+            for (int y = 0; y < _grid.GetHeight(); y++)
+            {
+                _cellVisualArray[x, y].SetActive(true);
+            }
         }
     }
     

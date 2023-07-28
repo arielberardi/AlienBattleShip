@@ -15,7 +15,7 @@ public class Ship : MonoBehaviour
     [SerializeField] private int _width;
     [SerializeField] private int _height;
     
-    private Direction _direction = Direction.Up;
+    private Direction _direction;
 
     public int GetWidth()
     {
@@ -108,5 +108,10 @@ public class Ship : MonoBehaviour
         }
         
         return gridPositionList;
+    }
+    
+    private void Awake()
+    {
+        _direction = Direction.Up;
     }
 }
