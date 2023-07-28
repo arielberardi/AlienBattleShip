@@ -13,16 +13,14 @@ public class ShipSnapSystem : MonoBehaviour
     private GameObject _shipPrefab;
     private GameObject _shipGameObject;
     private List<GameObject> _shipGameObjectList;
-    private GameObject _parent;
     private Ship _ship;
     
     private Vector2Int _lastGridPosition;
 
-    public void Setup(Grid2D<MapGridObject> grid, GameObject parent)
+    public void Setup(Grid2D<MapGridObject> grid)
     {        
         _grid = grid;
-        _parent = parent;
-        
+
         _shipGameObjectList = new List<GameObject>();
         _isGrabbed = false;
         _lastGridPosition = new Vector2Int();
@@ -140,7 +138,7 @@ public class ShipSnapSystem : MonoBehaviour
         // Create Prefab if doesn't exist before, move it if exist
         if (_ship == null)
         {
-            _shipGameObject = Instantiate(_shipPrefab, prefabPosition, Quaternion.identity, _parent.transform);
+            _shipGameObject = Instantiate(_shipPrefab, prefabPosition, Quaternion.identity, transform);
             _ship = _shipGameObject.GetComponent<Ship>();
         }
         else

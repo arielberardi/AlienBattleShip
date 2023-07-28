@@ -10,15 +10,12 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Vector2 _origin;
     [SerializeField] private GameObject[] _shipPrefabArray;
     
-    [SerializeField] private MapGridVisual[] _mapGridVisual;
-    [SerializeField] private ShipSnapSystem[] _shipSnapSystem;
-    
-    [SerializeField] private GameObject _player1;
-    [SerializeField] private GameObject _player2;
+    [SerializeField] private Player _player1;
+    [SerializeField] private Player _player2;
     
     private Grid2D<MapGridObject> _grid;
     private MapGridObject _lastGridObjectOverlayed;
-    private int _currentPlayer;
+    private Player _currentPlayer;
     
     private void Start()
     {
@@ -30,24 +27,16 @@ public class GameManager : MonoBehaviour
             (Grid2D<MapGridObject> g, int x, int y) => new MapGridObject(g, x, y)
         );
         
-        _currentPlayer = 0;
+        _currentPlayer = _player1;
         
-        _mapGridVisual[0].Setup(_grid);
-        _shipSnapSystem[0].Setup(_grid, _player1);
-        _mapGridVisual[0].Show();
-        _shipSnapSystem[0].Show();
-    
-        _mapGridVisual[1].Setup(_grid);
-        _shipSnapSystem[1].Setup(_grid, _player2);
-        _mapGridVisual[1].Hide();
-        _shipSnapSystem[1].Hide();
+        _player1.Setup(_width, _height, _cellSize, _origin);
+        _player2.Setup(_width, _height, _cellSize, _origin);
+        _player2.Hide();
     }
     
     private void Update()
     {
-        _mapGridVisual[_currentPlayer].Update();
-
-        UpdateOverlayedCell();
+        // UpdateOverlayedCell();
         UpdateShipPosition();
     }
     
@@ -80,43 +69,41 @@ public class GameManager : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            _shipSnapSystem[_currentPlayer].Place();
+            _currentPlayer.Place();
         }
                 
         if (Input.GetKeyDown(KeyCode.R))
         {
-            _shipSnapSystem[_currentPlayer].Rotate();
+            _currentPlayer.Rotate();
         }
         
         if (Input.GetKeyDown(KeyCode.A))
         {
-            _shipSnapSystem[_currentPlayer].Grab(_shipPrefabArray[0]);
+            _currentPlayer.Grab(_shipPrefabArray[0]);
         }
         
         if (Input.GetKeyDown(KeyCode.S))
         {
-            _shipSnapSystem[_currentPlayer].Grab(_shipPrefabArray[1]);
+            _currentPlayer.Grab(_shipPrefabArray[1]);
         }
         
         if (Input.GetKeyDown(KeyCode.D))
         {
-            _shipSnapSystem[_currentPlayer].Grab(_shipPrefabArray[2]);
+            _currentPlayer.Grab(_shipPrefabArray[2]);
         }
         
         if (Input.GetKeyDown(KeyCode.F))
         {
-            _shipSnapSystem[_currentPlayer].Grab(_shipPrefabArray[3]);
+            _currentPlayer.Grab(_shipPrefabArray[3]);
         }
         
         if (Input.GetKeyDown(KeyCode.Q))
         {
-            _mapGridVisual[_currentPlayer].Hide();
-            _shipSnapSystem[_currentPlayer].Hide();
+            _currentPlayer.Hide();
             
-            _currentPlayer = _currentPlayer == 1 ? 0 : 1;
+            _currentPlayer = _currentPlayer == _player1 ?  _player2 : _player1;
             
-            _mapGridVisual[_currentPlayer].Show();
-            _shipSnapSystem[_currentPlayer].Show();
+            _currentPlayer.Show();
         }
     }
 }

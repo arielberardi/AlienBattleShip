@@ -25,7 +25,7 @@ public class MapGridVisual : MonoBehaviour
                 Vector3 offset = new Vector3(_grid.GetCellSize()/2, _grid.GetCellSize()/2);
                 Quaternion rotation = Quaternion.identity;
                 
-                _cellVisualArray[x, y] = Instantiate(_prefab, _grid.GetWorldPosition(x, y) + offset, rotation);
+                _cellVisualArray[x, y] = Instantiate(_prefab, _grid.GetWorldPosition(x, y) + offset, rotation, transform);
             }
         }
         
