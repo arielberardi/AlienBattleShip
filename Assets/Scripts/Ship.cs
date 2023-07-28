@@ -15,6 +15,7 @@ public class Ship : MonoBehaviour
     [SerializeField] private int _width;
     [SerializeField] private int _height;
     
+    private Vector3 _targetPosition;
     private Direction _direction;
 
     public int GetWidth()
@@ -59,7 +60,7 @@ public class Ship : MonoBehaviour
     
     public void Translate(Vector3 position)
     {
-        transform.position = position;
+        _targetPosition = position;
     }
     
     public Vector3 GetPosition()
@@ -113,5 +114,13 @@ public class Ship : MonoBehaviour
     private void Awake()
     {
         _direction = Direction.Up;
+    }
+    
+    private void LateUpdate()
+    {
+        if (_targetPosition != transform.position) 
+        {
+            transform.position = Vector3.Lerp(transform.position, _targetPosition, Time.deltaTime * 15f);
+        }
     }
 }

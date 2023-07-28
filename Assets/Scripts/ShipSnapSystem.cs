@@ -146,7 +146,6 @@ public class ShipSnapSystem : MonoBehaviour
             Vector2Int gridPosition = _currentGridObject.GetGridPosition();
             if (!gridPosition.Equals(_lastGridPosition))
             {           
-                // TODO: Add a lerp to the movement
                 _ship.Translate(_grid.GetWorldPositionCenter(gridPosition));
                 _lastGridPosition = gridPosition;
             }
