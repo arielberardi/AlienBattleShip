@@ -8,25 +8,21 @@ public class GameManager : MonoBehaviour
     [SerializeField] private int _height = 10;
     [SerializeField] private float _cellSize = 1f;
     [SerializeField] private Vector2 _origin;
-    [SerializeField] private GameObject[] _shipPrefabArray;
+    [SerializeField] private GameObject[] _shipPrefabPlayer1Array;
+    [SerializeField] private GameObject[] _shipPrefabPlayer2Array;
     
     [SerializeField] private Player _player1;
     [SerializeField] private Player _player2;
     
-    private Grid2D<MapGridObject> _grid;
-    private MapGridObject _lastGridObjectOverlayed;
+    private const int PLAYER_1 = 1;
+    private const int PLAYER_2 = 2;
+    
     private Player _currentPlayer;
+    private int _currentPlayerId;
     
     private void Start()
     {
-        _grid = new Grid2D<MapGridObject>(
-            _width,
-            _height,
-            _cellSize,
-            _origin,
-            (Grid2D<MapGridObject> g, int x, int y) => new MapGridObject(g, x, y)
-        );
-        
+        _currentPlayerId = PLAYER_1;
         _currentPlayer = _player1;
         
         _player1.Setup(_width, _height, _cellSize, _origin);
@@ -53,31 +49,39 @@ public class GameManager : MonoBehaviour
         
         if (Input.GetKeyDown(KeyCode.A))
         {
-            _currentPlayer.Grab(_shipPrefabArray[0]);
+            GrabShipForCurrentPlayer(0);
         }
         
         if (Input.GetKeyDown(KeyCode.S))
         {
-            _currentPlayer.Grab(_shipPrefabArray[1]);
+            GrabShipForCurrentPlayer(1);
         }
         
         if (Input.GetKeyDown(KeyCode.D))
         {
-            _currentPlayer.Grab(_shipPrefabArray[2]);
-        }
-        
-        if (Input.GetKeyDown(KeyCode.F))
-        {
-            _currentPlayer.Grab(_shipPrefabArray[3]);
+           GrabShipForCurrentPlayer(2);
         }
         
         if (Input.GetKeyDown(KeyCode.Q))
         {
             _currentPlayer.Hide();
             
-            _currentPlayer = _currentPlayer == _player1 ?  _player2 : _player1;
+            _currentPlayer = _currentPlayerId == PLAYER_1 ?  _player2 : _player1;
+            _currentPlayerId = _currentPlayerId == PLAYER_1 ? PLAYER_2 : PLAYER_1;
             
             _currentPlayer.Show();
+        }
+    }
+    
+    private void GrabShipForCurrentPlayer(int index)
+    {
+        if (_currentPlayerId == PLAYER_1)
+        {
+            _currentPlayer.Grab(_shipPrefabPlayer1Array[index]);
+        }
+        else
+        {
+            _currentPlayer.Grab(_shipPrefabPlayer2Array[index]);
         }
     }
 }
