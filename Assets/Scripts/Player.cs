@@ -3,7 +3,7 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     [SerializeField] private ShipSnapSystem _shipSnapSystem;
-    [SerializeField] private MapGridVisual _shipPlaceGrid;  
+    [SerializeField] private MapGridVisual _shipSnapGrid;  
     [SerializeField] private ShipAttackSystem _shipAttackSystem;
     [SerializeField] private MapGridVisual _shipAttackGrid;
     
@@ -20,7 +20,7 @@ public class Player : MonoBehaviour
             (Grid2D<MapGridObject> g, int x, int y) => new MapGridObject(g, x, y)
         );
         
-        _shipPlaceGrid.Setup(_grid, MapGridVisual.MapType.Place);
+        _shipSnapGrid.Setup(_grid, MapGridVisual.MapType.Place);
         _shipSnapSystem.Setup(_grid);
         
         _shipAttackGrid.Setup(_grid, MapGridVisual.MapType.Attack);
@@ -29,7 +29,7 @@ public class Player : MonoBehaviour
     
     public void Hide()
     {
-        _shipPlaceGrid.Hide();
+        _shipSnapGrid.Hide();
         _shipSnapSystem.Hide();
         _shipAttackGrid.Hide();
         _shipAttackSystem.Hide();
@@ -37,7 +37,7 @@ public class Player : MonoBehaviour
     
     public void Show()
     {
-        _shipPlaceGrid.Show();
+        _shipSnapGrid.Show();
         _shipSnapSystem.Show();
         _shipAttackGrid.Show();
         _shipAttackSystem.Show();
@@ -45,7 +45,7 @@ public class Player : MonoBehaviour
     
     public void PrepareDeploy()
     {
-        _shipPlaceGrid.Show();
+        _shipSnapGrid.Show();
         _shipSnapSystem.Show();
     }
     
@@ -77,7 +77,7 @@ public class Player : MonoBehaviour
     
     private void Update()
     {
-        _shipPlaceGrid.Update();
+        _shipSnapGrid.Update();
         _shipAttackGrid.Update();
     }
 }

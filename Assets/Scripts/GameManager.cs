@@ -13,31 +13,29 @@ public class GameManager : MonoBehaviour
         ShipAttackPlayer2
     };
     
+    private GameState _currentGameState;
+    private GameState _lastGameState;
+
     [SerializeField] private int _width = 10;
     [SerializeField] private int _height = 10;
     [SerializeField] private float _cellSize = 1f;
     [SerializeField] private Vector2 _origin;
+    
     [SerializeField] private GameObject[] _shipPrefabPlayer1Array; // TODO: This needs to be on the Player
     [SerializeField] private GameObject[] _shipPrefabPlayer2Array; // TODO: This needs to be on the Player
     
     [SerializeField] private float _shipDeployTimeout = 20.0f;
     [SerializeField] private float _shipAttackTimeout = 20.0f;
-    
-    [SerializeField] private Player _player1;
-    [SerializeField] private Player _player2;
-    
-    private const int PLAYER_1 = 1;
-    private const int PLAYER_2 = 2;
-    
-    private Player _currentPlayer;
-    private int _currentPlayerId;
-    private bool _hasPlayerAttacked;
-    
-    private GameState _currentGameState;
-    private GameState _lastGameState;
-    
     private float _shipDeployTimer;
     private float _shipAttackTimer;
+
+    private const int PLAYER_1 = 1;
+    private const int PLAYER_2 = 2;
+
+    [SerializeField] private Player _player1;
+    [SerializeField] private Player _player2;
+    private Player _currentPlayer;
+    private int _currentPlayerId;    
     
     private void Start()
     {
@@ -92,7 +90,30 @@ public class GameManager : MonoBehaviour
             }
         }
         
-        ShipActions();
+        if (Input.GetMouseButtonDown(0))
+        {
+            _currentPlayer.Deploy();
+        }
+                
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            _currentPlayer.Rotate();
+        }
+        
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            GrabShipForCurrentPlayer(0);
+        }
+        
+        if (Input.GetKeyDown(KeyCode.S))
+        {
+            GrabShipForCurrentPlayer(1);
+        }
+        
+        if (Input.GetKeyDown(KeyCode.D))
+        {
+           GrabShipForCurrentPlayer(2);
+        }
         
         if (_shipDeployTimer > 0)
         {
@@ -159,34 +180,6 @@ public class GameManager : MonoBehaviour
             {
                 _currentGameState = GameState.ShipAttackPlayer1;
             }
-        }
-    }
-    
-    private void ShipActions()
-    {
-        if (Input.GetMouseButtonDown(0))
-        {
-            _currentPlayer.Deploy();
-        }
-                
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            _currentPlayer.Rotate();
-        }
-        
-        if (Input.GetKeyDown(KeyCode.A))
-        {
-            GrabShipForCurrentPlayer(0);
-        }
-        
-        if (Input.GetKeyDown(KeyCode.S))
-        {
-            GrabShipForCurrentPlayer(1);
-        }
-        
-        if (Input.GetKeyDown(KeyCode.D))
-        {
-           GrabShipForCurrentPlayer(2);
         }
     }
     
