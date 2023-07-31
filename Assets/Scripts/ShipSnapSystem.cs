@@ -39,6 +39,13 @@ public class ShipSnapSystem : MonoBehaviour
         {
             gridObject.SetActive(false);
         }
+        
+        // Destroy anything that's been grabbed
+        if (_isGrabbed)
+        {
+            _isGrabbed = false;
+            _ship.Destroy();
+        }
     }
     
     // Set the object as grabbed for instantiate when we are over the grid
