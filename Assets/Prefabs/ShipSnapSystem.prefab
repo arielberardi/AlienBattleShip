@@ -44,3 +44,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe27616683a0249b8a1883c4a804e061, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  blueTeamShipsArray:
+  - {fileID: 3949413020629734263, guid: d91ef538eb406480293d91bc9e5b4db8, type: 3}
+  - {fileID: 3949413020629734263, guid: 3ef9d26d7e877483fa4c15a22cbaa35d, type: 3}
+  - {fileID: 3949413020629734263, guid: 2ee44429267fd427d9f608f89da7ff15, type: 3}
+  redTeamShipsArray:
+  - {fileID: 2688475006017332399, guid: 9f70610ea8bec4e56b62984267b33d9e, type: 3}
+  - {fileID: 6184455576806907530, guid: 53390037a8c8640d4967df0092f3c2e2, type: 3}
+  - {fileID: 8780306674469609165, guid: 1a6f07e011e1440f9ab4751a2911e460, type: 3}

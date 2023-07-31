@@ -125,7 +125,8 @@ public class Grid2D<TGridObject>
 
     // This constructor is expected to received a function of the TGridObject to use 
     // Signature: TGridObject (Grid2D<TGridObject> g, int x, int y)
-    public Grid2D(int width, int height, float cellSize, Vector3 position, Func<Grid2D<TGridObject>, int, int, TGridObject> createObject)
+    public Grid2D(int width, int height, float cellSize, Vector3 position, 
+                  Func<Grid2D<TGridObject>, int, int, TGridObject> createObject)
     {
         _width = width;
         _height = height;

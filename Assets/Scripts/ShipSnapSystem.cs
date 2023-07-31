@@ -4,40 +4,58 @@ using UnityEngine;
 
 public class ShipSnapSystem : MonoBehaviour
 {
+    public enum ShipTeam
+    {
+        Blue,
+        Red
+    };
+    
+    public enum ShipType
+    {
+        Atlas,
+        Mother,
+        Spy
+    };
+    
+    [SerializeField] private GameObject[] blueTeamShipsArray = new GameObject[3];
+    [SerializeField] private GameObject[] redTeamShipsArray = new GameObject[3];
+    
     private Grid2D<MapGridObject> _grid;
     private MapGridObject _currentGridObject;
     
+    private ShipTeam _currentTeam;
+
     private bool _isGrabbed;
     
+    private Ship _ship;    
+    private List<Ship> _shipGameObjectList;
     private GameObject _shipPrefab;
-    private GameObject _shipGameObject;
-    private List<GameObject> _shipGameObjectList;
-    private Ship _ship;
-    
     private Vector2Int _lastGridPosition;
 
-    public void Setup(Grid2D<MapGridObject> grid)
+    public void Setup(Grid2D<MapGridObject> grid, ShipTeam team)
     {        
         _grid = grid;
+        
+        _currentTeam = team;
 
-        _shipGameObjectList = new List<GameObject>();
         _isGrabbed = false;
+        _shipGameObjectList = new List<Ship>();
         _lastGridPosition = new Vector2Int();
     }
     
     public void Show()
     {
-        foreach(GameObject gridObject in _shipGameObjectList)
+        foreach(Ship ship in _shipGameObjectList)
         {
-            gridObject.SetActive(true);
+            // ship.Show();
         }
     }
 
     public void Hide()
     {
-        foreach(GameObject gridObject in _shipGameObjectList)
+        foreach(Ship ship in _shipGameObjectList)
         {
-            gridObject.SetActive(false);
+            // ship.Hide();
         }
         
         // Destroy anything that's been grabbed
@@ -49,10 +67,10 @@ public class ShipSnapSystem : MonoBehaviour
     }
     
     // Set the object as grabbed for instantiate when we are over the grid
-    public void Grab(GameObject prefab)
+    public void Grab(ShipType type)
     {
         _isGrabbed = true;
-        _shipPrefab = prefab;
+        _shipPrefab = _currentTeam == ShipTeam.Blue ? blueTeamShipsArray[(int)type] : redTeamShipsArray[(int)type];
     }
     
     public bool Deploy()
@@ -73,7 +91,7 @@ public class ShipSnapSystem : MonoBehaviour
         else
         {
             bool canBePlaced = true;
-            List<Vector2Int> gridPositionList = _ship.GetGridPositionList(_currentGridObject.GetGridPosition());
+            List<Vector2Int> gridPositionList = _ship.GetGirdOffsetList(_currentGridObject.GetGridPosition());
             
             // Object can be placed on the grid if all object positions are empty
             foreach(Vector2Int position in gridPositionList)
@@ -92,15 +110,11 @@ public class ShipSnapSystem : MonoBehaviour
                 foreach(Vector2Int position in gridPositionList)
                 {   
                     MapGridObject gridObject = _grid.GetGridObject(position);
-                    
-                    if (gridObject != null)
-                    {
-                        gridObject.SetFull(true);
-                        gridObject.SetOverlay(true);
-                    }
-                    
-                    _shipGameObjectList.Add(_shipGameObject);
+                    gridObject.SetFull(true);
+                    gridObject.SetShipReference(_ship.gameObject);
                 }
+                
+                _shipGameObjectList.Add(_ship);
                 
                 _ship = null;
                 _isGrabbed = false;
@@ -144,8 +158,8 @@ public class ShipSnapSystem : MonoBehaviour
         // Create Prefab if doesn't exist before, move it if exist
         if (_ship == null)
         {
-            _shipGameObject = Instantiate(_shipPrefab, prefabPosition, Quaternion.identity, transform);
-            _ship = _shipGameObject.GetComponent<Ship>();
+            GameObject shipGameObject = Instantiate(_shipPrefab, prefabPosition, Quaternion.identity, transform);
+            _ship = shipGameObject.GetComponent<Ship>();
         }
         else
         {

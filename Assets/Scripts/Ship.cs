@@ -17,6 +17,8 @@ public class Ship : MonoBehaviour
     
     private Vector3 _targetPosition;
     private Direction _direction;
+    
+    private int _amountOfHits;
 
     public int GetWidth()
     {
@@ -73,7 +75,27 @@ public class Ship : MonoBehaviour
         Destroy(gameObject);
     }
     
-    public List<Vector2Int> GetGridPositionList(Vector2Int offset) {
+    public void Hide()
+    {
+        gameObject.SetActive(false);
+    }
+    
+    public void Show()
+    {
+        gameObject.SetActive(true);
+    }
+    
+    public void Hit()
+    {
+        _amountOfHits--;
+        
+        if (_amountOfHits == 0)
+        {
+            Destroy(gameObject);
+        }
+    }
+        
+    public List<Vector2Int> GetGirdOffsetList(Vector2Int offset) {
         List<Vector2Int> gridPositionList = new List<Vector2Int>();
         
         switch (_direction) {
@@ -110,10 +132,15 @@ public class Ship : MonoBehaviour
         
         return gridPositionList;
     }
-    
+        
     private void Awake()
     {
         _direction = Direction.Up;
+    }
+    
+    private void Start()
+    {
+        _amountOfHits = _width * _height;
     }
     
     private void LateUpdate()

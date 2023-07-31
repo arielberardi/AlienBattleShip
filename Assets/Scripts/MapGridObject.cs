@@ -7,6 +7,7 @@ public class MapGridObject
     private int _x;
     private int _y;
     private Grid2D<MapGridObject> _grid;
+    private Ship _ship;
     
     private bool _isFull;
     private bool _isOverlay;
@@ -17,6 +18,8 @@ public class MapGridObject
         _x = x;
         _y = y;
         _grid = grid;
+        
+        _ship = null;
         
         _isFull = false;
         _isOverlay = false;
@@ -45,6 +48,11 @@ public class MapGridObject
         return _isOverlay;
     }
     
+    public void SetShipReference(GameObject ship)
+    {
+        _ship = ship.GetComponent<Ship>();
+    }
+    
     public void SetAttacked(bool value)
     {
         _isAttacked = value;
@@ -61,7 +69,7 @@ public class MapGridObject
         x = _x;
         y = _y;
     }
-    
+        
     public Vector2Int GetGridPosition()
     {
         return new Vector2Int(_x, _y);

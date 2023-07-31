@@ -21,9 +21,6 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float _cellSize = 1f;
     [SerializeField] private Vector2 _origin;
     
-    [SerializeField] private GameObject[] _shipPrefabPlayer1Array; // TODO: This needs to be on the Player
-    [SerializeField] private GameObject[] _shipPrefabPlayer2Array; // TODO: This needs to be on the Player
-    
     [SerializeField] private float _shipDeployTimeout = 20.0f;
     [SerializeField] private float _shipAttackTimeout = 20.0f;
     private float _shipDeployTimer;
@@ -42,8 +39,8 @@ public class GameManager : MonoBehaviour
         _lastGameState = GameState.Idle;
         _currentGameState = GameState.ShipDeployPlayer1;
         
-        _player1.Setup(_width, _height, _cellSize, _origin);
-        _player2.Setup(_width, _height, _cellSize, _origin);
+        _player1.Setup(_width, _height, _cellSize, _origin, ShipSnapSystem.ShipTeam.Blue);
+        _player2.Setup(_width, _height, _cellSize, _origin, ShipSnapSystem.ShipTeam.Red);
         _player1.Hide();
         _player2.Hide();
     }
@@ -102,17 +99,17 @@ public class GameManager : MonoBehaviour
         
         if (Input.GetKeyDown(KeyCode.A))
         {
-            GrabShipForCurrentPlayer(0);
+            _currentPlayer.Grab(ShipSnapSystem.ShipType.Atlas);
         }
         
         if (Input.GetKeyDown(KeyCode.S))
         {
-            GrabShipForCurrentPlayer(1);
+            _currentPlayer.Grab(ShipSnapSystem.ShipType.Mother);
         }
         
         if (Input.GetKeyDown(KeyCode.D))
         {
-           GrabShipForCurrentPlayer(2);
+           _currentPlayer.Grab(ShipSnapSystem.ShipType.Spy);
         }
         
         if (_shipDeployTimer > 0)
@@ -180,18 +177,6 @@ public class GameManager : MonoBehaviour
             {
                 _currentGameState = GameState.ShipAttackPlayer1;
             }
-        }
-    }
-    
-    private void GrabShipForCurrentPlayer(int index)
-    {
-        if (_currentPlayerId == PLAYER_1)
-        {
-            _currentPlayer.Grab(_shipPrefabPlayer1Array[index]);
-        }
-        else
-        {
-            _currentPlayer.Grab(_shipPrefabPlayer2Array[index]);
         }
     }
 }

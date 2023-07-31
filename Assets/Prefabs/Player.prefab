@@ -49,7 +49,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _shipSnapSystem: {fileID: 1279342962976954286}
-  _shipPlaceGrid: {fileID: 8918579651969530614}
+  _shipSnapGrid: {fileID: 8918579651969530614}
   _shipAttackSystem: {fileID: 3919995610796282433}
   _shipAttackGrid: {fileID: 5172589220068497473}
 --- !u!1001 &804313535810773131

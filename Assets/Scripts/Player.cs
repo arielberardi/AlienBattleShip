@@ -10,18 +10,18 @@ public class Player : MonoBehaviour
     private Grid2D<MapGridObject> _grid;
     
     // Start is called before the first frame update
-    public void Setup(int width, int height, float cellSize, Vector3 origin)
+    public void Setup(int width, int height, float cellSize, Vector3 origin, ShipSnapSystem.ShipTeam team)
     {
         _grid = new Grid2D<MapGridObject>(
             width,
             height,
             cellSize,
-            origin,
+            origin, 
             (Grid2D<MapGridObject> g, int x, int y) => new MapGridObject(g, x, y)
         );
         
         _shipSnapGrid.Setup(_grid, MapGridVisual.MapType.Place);
-        _shipSnapSystem.Setup(_grid);
+        _shipSnapSystem.Setup(_grid, team);
         
         _shipAttackGrid.Setup(_grid, MapGridVisual.MapType.Attack);
         _shipAttackSystem.Setup(_grid);
@@ -32,7 +32,6 @@ public class Player : MonoBehaviour
         _shipSnapGrid.Hide();
         _shipSnapSystem.Hide();
         _shipAttackGrid.Hide();
-        _shipAttackSystem.Hide();
     }
     
     public void Show()
@@ -40,7 +39,6 @@ public class Player : MonoBehaviour
         _shipSnapGrid.Show();
         _shipSnapSystem.Show();
         _shipAttackGrid.Show();
-        _shipAttackSystem.Show();
     }
     
     public void PrepareDeploy()
@@ -54,9 +52,9 @@ public class Player : MonoBehaviour
         _shipSnapSystem.Deploy();
     }
     
-    public void Grab(GameObject prefab)
+    public void Grab(ShipSnapSystem.ShipType type)
     {
-        _shipSnapSystem.Grab(prefab);
+        _shipSnapSystem.Grab(type);
     }
     
     public void Rotate()
@@ -67,7 +65,6 @@ public class Player : MonoBehaviour
     public void PrepareAttack()
     {
         _shipAttackGrid.Show();
-        _shipAttackSystem.Show();
     }
     
     public bool Attack()
