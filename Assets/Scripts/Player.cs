@@ -1,11 +1,11 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Player : MonoBehaviour
 {
     [SerializeField] private ShipSnapSystem _shipSnapSystem;
-    [SerializeField] private MapGridVisual _mapGridVisual;  
+    [SerializeField] private MapGridVisual _shipPlaceGrid;  
+    [SerializeField] private ShipAttackSystem _shipAttackSystem;
+    [SerializeField] private MapGridVisual _shipAttackGrid;
     
     private Grid2D<MapGridObject> _grid;
     
@@ -20,13 +20,38 @@ public class Player : MonoBehaviour
             (Grid2D<MapGridObject> g, int x, int y) => new MapGridObject(g, x, y)
         );
         
-        _mapGridVisual.Setup(_grid);
+        _shipPlaceGrid.Setup(_grid, MapGridVisual.MapType.Place);
         _shipSnapSystem.Setup(_grid);
+        
+        _shipAttackGrid.Setup(_grid, MapGridVisual.MapType.Attack);
+        _shipAttackSystem.Setup(_grid);
     }
     
-    public void Place()
+    public void Hide()
     {
-        _shipSnapSystem.Place();
+        _shipPlaceGrid.Hide();
+        _shipSnapSystem.Hide();
+        _shipAttackGrid.Hide();
+        _shipAttackSystem.Hide();
+    }
+    
+    public void Show()
+    {
+        _shipPlaceGrid.Show();
+        _shipSnapSystem.Show();
+        _shipAttackGrid.Show();
+        _shipAttackSystem.Show();
+    }
+    
+    public void PrepareDeploy()
+    {
+        _shipPlaceGrid.Show();
+        _shipSnapSystem.Show();
+    }
+    
+    public void Deploy()
+    {
+        _shipSnapSystem.Deploy();
     }
     
     public void Grab(GameObject prefab)
@@ -39,20 +64,20 @@ public class Player : MonoBehaviour
         _shipSnapSystem.Rotate();
     }
     
-    public void Hide()
+    public void PrepareAttack()
     {
-        _mapGridVisual.Hide();
-        _shipSnapSystem.Hide();
+        _shipAttackGrid.Show();
+        _shipAttackSystem.Show();
     }
     
-    public void Show()
+    public bool Attack()
     {
-        _mapGridVisual.Show();
-        _shipSnapSystem.Show();
+        return _shipAttackSystem.Attack();
     }
     
     private void Update()
     {
-        _mapGridVisual.Update();
+        _shipPlaceGrid.Update();
+        _shipAttackGrid.Update();
     }
 }

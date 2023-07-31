@@ -10,6 +10,7 @@ public class MapGridObject
     
     private bool _isFull;
     private bool _isOverlay;
+    private bool _isAttacked;
     
     public MapGridObject(Grid2D<MapGridObject> grid, int x, int y)
     {
@@ -19,6 +20,7 @@ public class MapGridObject
         
         _isFull = false;
         _isOverlay = false;
+        _isAttacked = false;
     }
     
     public void SetFull(bool value)
@@ -41,6 +43,17 @@ public class MapGridObject
     public bool GetIsOverlay()
     {
         return _isOverlay;
+    }
+    
+    public void SetAttacked(bool value)
+    {
+        _isAttacked = value;
+        TriggerUpdateGrid();
+    }
+    
+    public bool GetIsAttacked()
+    {
+        return _isAttacked;
     }
     
     public void GetGridPosition(out int x, out int y)

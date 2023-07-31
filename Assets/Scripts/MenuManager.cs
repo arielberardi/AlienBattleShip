@@ -17,4 +17,9 @@ public class MenuManager : MonoBehaviour
         NetworkManager.Singleton.StartClient();
         SceneManager.LoadScene(1);
     }
+        
+    public void ButtonStartGame_Clicked()
+    {
+        SceneManager.LoadScene(1);
+    }
 }

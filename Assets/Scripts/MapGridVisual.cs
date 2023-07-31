@@ -4,18 +4,28 @@ using UnityEngine;
 
 public class MapGridVisual : MonoBehaviour
 {
-    [SerializeField] private GameObject _prefab;
+    public enum MapType 
+    {
+        Place,
+        Attack
+    }
+    
+    [SerializeField] private GameObject _cellPrefab;
     
     private Grid2D<MapGridObject> _grid;
     private GameObject[,] _cellVisualArray;
     private bool _requiresUpdate;
 
     private MapGridObject _lastGridObjectOverlayed;
+    
+    private MapType _mapType;
 
-    public void Setup(Grid2D<MapGridObject> grid)
+    public void Setup(Grid2D<MapGridObject> grid, MapType type)
     {
         _grid = grid;
         _grid.OnGridObjectChanged.AddListener(Grid_OnGridObjectChanged);
+        
+        _mapType = type;
         
         _requiresUpdate = false;
         
@@ -27,21 +37,14 @@ public class MapGridVisual : MonoBehaviour
                 Vector3 offset = new Vector3(_grid.GetCellSize()/2, _grid.GetCellSize()/2);
                 Quaternion rotation = Quaternion.identity;
                 
-                _cellVisualArray[x, y] = Instantiate(_prefab, _grid.GetWorldPosition(x, y) + offset, rotation, transform);
+                _cellVisualArray[x, y] = Instantiate(_cellPrefab, _grid.GetWorldPosition(x, y) + offset, rotation, transform);
+                UpdateCell(_cellVisualArray[x, y],  _grid.GetGridObject(x, y));
             }
         }
-        
-        UpdateCells();
     } 
 
     public void Update()
     {
-        if (_requiresUpdate)
-        {
-            _requiresUpdate = false;
-            UpdateCells();
-        }
-        
         UpdateOverlayStatus();
     }
     
@@ -69,30 +72,29 @@ public class MapGridVisual : MonoBehaviour
     
     private void Grid_OnGridObjectChanged(Grid2D<MapGridObject>.OnGridObjectChangedArgs args)
     {
-        _requiresUpdate = true;
-    }
-    
-    private void UpdateCells()
-    {
-        for (int x = 0; x < _grid.GetWidth(); x++)
-        {
-            for (int y = 0; y < _grid.GetHeight(); y++)
-            {
-                UpdateCell(_cellVisualArray[x, y],  _grid.GetGridObject(x, y));
-            }
-        }
+        UpdateCell(_cellVisualArray[args.x, args.y],  _grid.GetGridObject(args.x, args.y));
     }
     
     private void UpdateCell(GameObject cell, MapGridObject gridObject)
     {
-        cell.GetComponent<GridCellVisual>().SetSelected(gridObject.GetIsOverlay() || gridObject.GetIsFull());
+        GridCellVisual gridVisual = cell.GetComponent<GridCellVisual>();
+        
+        if (_mapType == MapType.Attack)
+        {
+            gridVisual.SetSelected(gridObject.GetIsOverlay() || gridObject.GetIsAttacked());
+            gridVisual.SetAttacked(gridObject.GetIsAttacked());
+        }        
+        else
+        {
+            gridVisual.SetSelected(gridObject.GetIsOverlay() || gridObject.GetIsFull());
+        }
     }
     
     private void UpdateOverlayStatus()
     {
         Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         MapGridObject gridObjectOverlayed = _grid.GetGridObject(mousePosition);
-        
+    
         if (gridObjectOverlayed == null)
         {
             _lastGridObjectOverlayed?.SetOverlay(false);
@@ -100,9 +102,18 @@ public class MapGridVisual : MonoBehaviour
             return;
         }
         
-        if (gridObjectOverlayed != null && gridObjectOverlayed.GetIsFull())
+        // Do not add overlay to an already selected grid
+        if (gridObjectOverlayed != null)
         {
-            return;
+            if (_mapType == MapType.Attack &&  gridObjectOverlayed.GetIsAttacked())
+            {
+                return;
+            }
+            
+            if (_mapType == MapType.Place && gridObjectOverlayed.GetIsFull())
+            {
+                return;
+            }
         }   
    
         if (gridObjectOverlayed != null && _lastGridObjectOverlayed != gridObjectOverlayed)

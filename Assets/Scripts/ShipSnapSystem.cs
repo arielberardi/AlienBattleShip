@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-// TODO: Will make ax list of this ships so GameManager just need to select a SHIP TYPE
 public class ShipSnapSystem : MonoBehaviour
 {
     private Grid2D<MapGridObject> _grid;
@@ -26,6 +25,22 @@ public class ShipSnapSystem : MonoBehaviour
         _lastGridPosition = new Vector2Int();
     }
     
+    public void Show()
+    {
+        foreach(GameObject gridObject in _shipGameObjectList)
+        {
+            gridObject.SetActive(true);
+        }
+    }
+
+    public void Hide()
+    {
+        foreach(GameObject gridObject in _shipGameObjectList)
+        {
+            gridObject.SetActive(false);
+        }
+    }
+    
     // Set the object as grabbed for instantiate when we are over the grid
     public void Grab(GameObject prefab)
     {
@@ -33,7 +48,7 @@ public class ShipSnapSystem : MonoBehaviour
         _shipPrefab = prefab;
     }
     
-    public bool Place()
+    public bool Deploy()
     {
         // Place only if we grab the object and is instantiated
         if (!_isGrabbed || _ship == null) 
@@ -99,22 +114,6 @@ public class ShipSnapSystem : MonoBehaviour
         
         _ship.Rotate();
         return true;
-    }
-    
-    public void Hide()
-    {
-        foreach(GameObject gridObject in _shipGameObjectList)
-        {
-            gridObject.SetActive(false);
-        }
-    }
-    
-    public void Show()
-    {
-        foreach(GameObject gridObject in _shipGameObjectList)
-        {
-            gridObject.SetActive(true);
-        }
     }
     
     private void Update()
