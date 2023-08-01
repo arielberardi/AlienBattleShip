@@ -7,7 +7,7 @@ public class Ship : MonoBehaviour
 {
     public UnityEvent<OnShipSinkedArgs> OnShipSinked;
     public class OnShipSinkedArgs {
-        public GameObject gameObject;
+        public GameObject ship;
     }
     
     public enum Direction
@@ -96,7 +96,7 @@ public class Ship : MonoBehaviour
     {
         if (_currentHealth == 0)
         {
-            OnShipSinked.Invoke(new OnShipSinkedArgs { gameObject = gameObject } );
+            OnShipSinked.Invoke(new OnShipSinkedArgs { ship = gameObject } );
         }
         else
         {

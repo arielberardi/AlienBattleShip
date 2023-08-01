@@ -2,43 +2,28 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MapGridVisual : MonoBehaviour
+public class GridVisual : MonoBehaviour
 {
-    public enum MapType 
-    {
-        Place,
-        Attack
-    }
-    
-    [SerializeField] private GameObject _cellPrefab;
+    [SerializeField] private GameObject _gridObjectVisual;
     
     private Grid2D<GridObject> _grid;
-    private GameObject[,] _cellVisualArray;
+    private GameObject[,] _gridVisualArray;
     private bool _requiresUpdate;
 
     private GridObject _lastGridObjectOverlayed;
-    
-    private MapType _mapType;
 
-    public void Setup(Grid2D<GridObject> grid, MapType type)
+    public void Setup(Grid2D<GridObject> grid)
     {
         _grid = grid;
         _grid.OnGridObjectChanged.AddListener(Grid_OnGridObjectChanged);
         
-        _mapType = type;
-        
-        _requiresUpdate = false;
-        
-        _cellVisualArray = new GameObject[_grid.GetWidth(), _grid.GetHeight()];
+        _gridVisualArray = new GameObject[_grid.GetWidth(), _grid.GetHeight()];
         for (int x = 0; x < _grid.GetWidth(); x++)
         {
             for (int y = 0; y < _grid.GetHeight(); y++)
             {
-                Vector3 offset = new Vector3(_grid.GetCellSize()/2, _grid.GetCellSize()/2);
-                Quaternion rotation = Quaternion.identity;
-                
-                _cellVisualArray[x, y] = Instantiate(_cellPrefab, _grid.GetWorldPosition(x, y) + offset, rotation, transform);
-                UpdateCell(_cellVisualArray[x, y],  _grid.GetGridObject(x, y));
+                Vector3 position = _grid.GetWorldPosition(x, y) + new Vector3(_grid.GetCellSize()/2, _grid.GetCellSize()/2);
+                _gridVisualArray[x, y] = Instantiate(_gridObjectVisual, position, Quaternion.identity, transform);
             }
         }
     } 
@@ -54,7 +39,7 @@ public class MapGridVisual : MonoBehaviour
         {
             for (int y = 0; y < _grid.GetHeight(); y++)
             {
-                _cellVisualArray[x, y].SetActive(false);
+                _gridVisualArray[x, y].SetActive(false);
             }
         }
     }
@@ -65,29 +50,20 @@ public class MapGridVisual : MonoBehaviour
         {
             for (int y = 0; y < _grid.GetHeight(); y++)
             {
-                _cellVisualArray[x, y].SetActive(true);
+                _gridVisualArray[x, y].SetActive(true);
             }
         }
     }
     
     private void Grid_OnGridObjectChanged(Grid2D<GridObject>.OnGridObjectChangedArgs args)
     {
-        UpdateCell(_cellVisualArray[args.x, args.y],  _grid.GetGridObject(args.x, args.y));
+        UpdateCell(_gridVisualArray[args.x, args.y],  _grid.GetGridObject(args.x, args.y));
     }
     
     private void UpdateCell(GameObject cell, GridObject gridObject)
     {
         GridObjectVisual gridVisual = cell.GetComponent<GridObjectVisual>();
-        
-        if (_mapType == MapType.Attack)
-        {
-            gridVisual.SetSelected(gridObject.GetIsOverlay() || gridObject.GetIsAttacked());
-            gridVisual.SetAttacked(gridObject.GetIsAttacked());
-        }        
-        else
-        {
-            gridVisual.SetSelected(gridObject.GetIsOverlay() || gridObject.GetIsFull());
-        }
+        gridVisual.SetSelected(gridObject.GetIsOverlay() || gridObject.GetIsFull() || gridObject.GetIsAttacked());
     }
     
     private void UpdateOverlayStatus()
@@ -105,16 +81,11 @@ public class MapGridVisual : MonoBehaviour
         // Do not add overlay to an already selected grid
         if (gridObjectOverlayed != null)
         {
-            if (_mapType == MapType.Attack &&  gridObjectOverlayed.GetIsAttacked())
+            if (gridObjectOverlayed.GetIsFull() || gridObjectOverlayed.GetIsAttacked())
             {
                 return;
             }
-            
-            if (_mapType == MapType.Place && gridObjectOverlayed.GetIsFull())
-            {
-                return;
-            }
-        }   
+        }
    
         if (gridObjectOverlayed != null && _lastGridObjectOverlayed != gridObjectOverlayed)
         {

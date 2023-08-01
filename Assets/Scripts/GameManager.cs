@@ -29,9 +29,9 @@ public class GameManager : MonoBehaviour
     private const int PLAYER_1 = 1;
     private const int PLAYER_2 = 2;
 
-    [SerializeField] private Player _player1;
-    [SerializeField] private Player _player2;
-    private Player _currentPlayer;
+    [SerializeField] private PlayerController _player1;
+    [SerializeField] private PlayerController _player2;
+    private PlayerController _currentPlayer;
     private int _currentPlayerId;    
     
     private void Start()
@@ -69,7 +69,7 @@ public class GameManager : MonoBehaviour
                 _currentPlayer = _player1;
                 
                 _shipDeployTimer = _shipDeployTimeout;
-                Debug.Log("Ship Deploy for Player 1");
+                Debug.Log("Ship Deploy for PlayerController 1");
             }
         }
         else
@@ -83,7 +83,7 @@ public class GameManager : MonoBehaviour
                 _currentPlayer = _player2;
                 
                 _shipDeployTimer = _shipDeployTimeout;
-                Debug.Log("Ship Deploy for Player 2");
+                Debug.Log("Ship Deploy for PlayerController 2");
             }
         }
         
@@ -136,7 +136,7 @@ public class GameManager : MonoBehaviour
                 _currentPlayer = _player1;
                 
                 _shipAttackTimer = _shipAttackTimeout;
-                Debug.Log("Ship Attack for Player 1");
+                Debug.Log("Ship Attack for PlayerController 1");
             }
         }
         else
@@ -150,7 +150,7 @@ public class GameManager : MonoBehaviour
                 _currentPlayer = _player2;
                 
                 _shipAttackTimer = _shipAttackTimeout;
-                Debug.Log("Ship Attack for Player 2");
+                Debug.Log("Ship Attack for PlayerController 2");
             }
         }
         
