@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GridCellVisual : MonoBehaviour
+public class GridObjectVisual : MonoBehaviour
 {
     [SerializeField] private GameObject _visual;
     [SerializeField] private GameObject _selected;

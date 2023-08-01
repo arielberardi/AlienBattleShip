@@ -156,8 +156,18 @@ public class GameManager : MonoBehaviour
         
         if (Input.GetMouseButtonDown(0))
         {
-            if (_currentPlayer.Attack())
+            Vector2Int attackPosition = _currentPlayer.Attack();
+            if (attackPosition.x != -1)
             {
+                if (_currentPlayerId == PLAYER_1)
+                {
+                    _player2.Hit(attackPosition);
+                }
+                else if (_currentPlayerId == PLAYER_2)
+                {
+                    _player1.Hit(attackPosition);
+                }
+                
                 _shipAttackTimer = 0;
             }
         }

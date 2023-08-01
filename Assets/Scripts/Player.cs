@@ -7,17 +7,17 @@ public class Player : MonoBehaviour
     [SerializeField] private ShipAttackSystem _shipAttackSystem;
     [SerializeField] private MapGridVisual _shipAttackGrid;
     
-    private Grid2D<MapGridObject> _grid;
+    private Grid2D<GridObject> _grid;
     
     // Start is called before the first frame update
     public void Setup(int width, int height, float cellSize, Vector3 origin, ShipSnapSystem.ShipTeam team)
     {
-        _grid = new Grid2D<MapGridObject>(
+        _grid = new Grid2D<GridObject>(
             width,
             height,
             cellSize,
             origin, 
-            (Grid2D<MapGridObject> g, int x, int y) => new MapGridObject(g, x, y)
+            (Grid2D<GridObject> g, int x, int y) => new GridObject(g, x, y)
         );
         
         _shipSnapGrid.Setup(_grid, MapGridVisual.MapType.Place);
@@ -67,9 +67,14 @@ public class Player : MonoBehaviour
         _shipAttackGrid.Show();
     }
     
-    public bool Attack()
+    public Vector2Int Attack()
     {
         return _shipAttackSystem.Attack();
+    }
+    
+    public bool Hit(Vector2Int hitPosition)
+    {
+        return _shipAttackSystem.Hit(hitPosition);
     }
     
     private void Update()

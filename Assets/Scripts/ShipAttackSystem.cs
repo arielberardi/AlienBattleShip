@@ -4,48 +4,43 @@ using UnityEngine;
 
 public class ShipAttackSystem : MonoBehaviour
 {
-    private Grid2D<MapGridObject> _grid;
-    private List<GameObject> _attackedPointList;
+    private Grid2D<GridObject> _grid;
 
-    public void Setup(Grid2D<MapGridObject> grid)
+    public void Setup(Grid2D<GridObject> grid)
     {
         _grid = grid;
-        _attackedPointList = new List<GameObject>();
     }
     
-    public void Show()
-    {
-        foreach(GameObject attackedPoint in _attackedPointList)
-        {
-            attackedPoint.SetActive(true);
-        }
-    }
-    
-    public void Hide()
-    {
-        foreach(GameObject attackedPoint in _attackedPointList)
-        {
-            attackedPoint.SetActive(false);
-        }
-    }
-    
-    public bool Attack()
+    public Vector2Int Attack()
     {
         Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        MapGridObject gridObject = _grid.GetGridObject(mousePosition);
+        GridObject gridObject = _grid.GetGridObject(mousePosition);
         
         // We only update if we are over the grid
         if (gridObject == null)
         {
-            return false;
+            return new Vector2Int(-1, -1);
         }
         
         if (gridObject.GetIsAttacked())
         {
-            return false;
+            return new Vector2Int(-1, -1);
         }
-                
+        
         gridObject.SetAttacked(true);
-        return true;
+        return gridObject.GetGridPosition();
+    }
+    
+    public bool Hit(Vector2Int hitPosition)
+    {
+        GridObject gridObject = _grid.GetGridObject(hitPosition);
+        
+        if (gridObject.GetIsFull())
+        {
+            gridObject.Hit();
+            return true;
+        }
+        
+        return false;
     }
 }

@@ -20,8 +20,8 @@ public class ShipSnapSystem : MonoBehaviour
     [SerializeField] private GameObject[] blueTeamShipsArray = new GameObject[3];
     [SerializeField] private GameObject[] redTeamShipsArray = new GameObject[3];
     
-    private Grid2D<MapGridObject> _grid;
-    private MapGridObject _currentGridObject;
+    private Grid2D<GridObject> _grid;
+    private GridObject _currentGridObject;
     
     private ShipTeam _currentTeam;
 
@@ -32,7 +32,7 @@ public class ShipSnapSystem : MonoBehaviour
     private GameObject _shipPrefab;
     private Vector2Int _lastGridPosition;
 
-    public void Setup(Grid2D<MapGridObject> grid, ShipTeam team)
+    public void Setup(Grid2D<GridObject> grid, ShipTeam team)
     {        
         _grid = grid;
         
@@ -47,7 +47,7 @@ public class ShipSnapSystem : MonoBehaviour
     {
         foreach(Ship ship in _shipGameObjectList)
         {
-            // ship.Show();
+            ship.Show();
         }
     }
 
@@ -55,7 +55,7 @@ public class ShipSnapSystem : MonoBehaviour
     {
         foreach(Ship ship in _shipGameObjectList)
         {
-            // ship.Hide();
+            ship.Hide();
         }
         
         // Destroy anything that's been grabbed
@@ -96,7 +96,7 @@ public class ShipSnapSystem : MonoBehaviour
             // Object can be placed on the grid if all object positions are empty
             foreach(Vector2Int position in gridPositionList)
             {
-                MapGridObject gridObject = _grid.GetGridObject(position);
+                GridObject gridObject = _grid.GetGridObject(position);
                 if (gridObject == null || gridObject.GetIsFull())
                 {
                     canBePlaced = false;
@@ -109,7 +109,7 @@ public class ShipSnapSystem : MonoBehaviour
             {
                 foreach(Vector2Int position in gridPositionList)
                 {   
-                    MapGridObject gridObject = _grid.GetGridObject(position);
+                    GridObject gridObject = _grid.GetGridObject(position);
                     gridObject.SetFull(true);
                     gridObject.SetShipReference(_ship.gameObject);
                 }

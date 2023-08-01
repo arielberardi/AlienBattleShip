@@ -12,15 +12,15 @@ public class MapGridVisual : MonoBehaviour
     
     [SerializeField] private GameObject _cellPrefab;
     
-    private Grid2D<MapGridObject> _grid;
+    private Grid2D<GridObject> _grid;
     private GameObject[,] _cellVisualArray;
     private bool _requiresUpdate;
 
-    private MapGridObject _lastGridObjectOverlayed;
+    private GridObject _lastGridObjectOverlayed;
     
     private MapType _mapType;
 
-    public void Setup(Grid2D<MapGridObject> grid, MapType type)
+    public void Setup(Grid2D<GridObject> grid, MapType type)
     {
         _grid = grid;
         _grid.OnGridObjectChanged.AddListener(Grid_OnGridObjectChanged);
@@ -70,14 +70,14 @@ public class MapGridVisual : MonoBehaviour
         }
     }
     
-    private void Grid_OnGridObjectChanged(Grid2D<MapGridObject>.OnGridObjectChangedArgs args)
+    private void Grid_OnGridObjectChanged(Grid2D<GridObject>.OnGridObjectChangedArgs args)
     {
         UpdateCell(_cellVisualArray[args.x, args.y],  _grid.GetGridObject(args.x, args.y));
     }
     
-    private void UpdateCell(GameObject cell, MapGridObject gridObject)
+    private void UpdateCell(GameObject cell, GridObject gridObject)
     {
-        GridCellVisual gridVisual = cell.GetComponent<GridCellVisual>();
+        GridObjectVisual gridVisual = cell.GetComponent<GridObjectVisual>();
         
         if (_mapType == MapType.Attack)
         {
@@ -93,7 +93,7 @@ public class MapGridVisual : MonoBehaviour
     private void UpdateOverlayStatus()
     {
         Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        MapGridObject gridObjectOverlayed = _grid.GetGridObject(mousePosition);
+        GridObject gridObjectOverlayed = _grid.GetGridObject(mousePosition);
     
         if (gridObjectOverlayed == null)
         {

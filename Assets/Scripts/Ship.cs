@@ -1,9 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Ship : MonoBehaviour
 {
+    public UnityEvent<OnShipSinkedArgs> OnShipSinked;
+    public class OnShipSinkedArgs {
+        public GameObject gameObject;
+    }
+    
     public enum Direction
     {
         Up,
@@ -14,11 +20,12 @@ public class Ship : MonoBehaviour
     
     [SerializeField] private int _width;
     [SerializeField] private int _height;
+    [SerializeField] private int _health;
     
     private Vector3 _targetPosition;
     private Direction _direction;
     
-    private int _amountOfHits;
+    private int _currentHealth;
 
     public int GetWidth()
     {
@@ -85,14 +92,21 @@ public class Ship : MonoBehaviour
         gameObject.SetActive(true);
     }
     
-    public void Hit()
+    public void Damage()
     {
-        _amountOfHits--;
-        
-        if (_amountOfHits == 0)
+        if (_currentHealth == 0)
         {
-            Destroy(gameObject);
+            OnShipSinked.Invoke(new OnShipSinkedArgs { gameObject = gameObject } );
         }
+        else
+        {
+            _currentHealth--;
+        }
+    }
+    
+    public bool GetIsSinked()
+    {
+        return _currentHealth == 0;
     }
         
     public List<Vector2Int> GetGirdOffsetList(Vector2Int offset) {
@@ -136,11 +150,13 @@ public class Ship : MonoBehaviour
     private void Awake()
     {
         _direction = Direction.Up;
+        
+        OnShipSinked = new UnityEvent<OnShipSinkedArgs>();
     }
     
     private void Start()
     {
-        _amountOfHits = _width * _height;
+        _currentHealth = _health;
     }
     
     private void LateUpdate()
