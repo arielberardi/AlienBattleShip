@@ -152,14 +152,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a673b1328b55402c8cc96d635728d5a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _width: 10
-  _height: 10
-  _cellSize: 10
-  _origin: {x: -50, y: -50}
-  _shipDeployTimeout: 5
-  _shipAttackTimeout: 5
-  _player1: {fileID: 0}
-  _player2: {fileID: 0}
+  _player: {fileID: 3356909390993711747, guid: 3b6db5be6a4a84f8285097ebd440d9f4, type: 3}
+  _gridMap: {fileID: 3203866172169213601, guid: f6bcf0581dfd7452bb5295d7ea5f2818, type: 3}
 --- !u!4 &414121357
 Transform:
   m_ObjectHideFlags: 0

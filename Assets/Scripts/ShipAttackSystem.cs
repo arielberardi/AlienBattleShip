@@ -22,22 +22,22 @@ public class ShipAttackSystem : MonoBehaviour
             return new Vector2Int(-1, -1);
         }
         
-        if (gridObject.GetIsAttacked())
+        if (gridObject.isAttacked)
         {
             return new Vector2Int(-1, -1);
         }
         
-        gridObject.SetAttacked(true);
-        return gridObject.GetGridPosition();
+        gridObject.isAttacked = true;
+        return gridObject.position;
     }
     
     public bool Hit(Vector2Int hitPosition)
     {
         GridObject gridObject = _grid.GetGridObject(hitPosition);
         
-        if (gridObject.GetIsFull())
+        if (gridObject.isFull)
         {
-            gridObject.Hit();
+            // gridObject.Hit();
             return true;
         }
         

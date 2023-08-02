@@ -91,13 +91,13 @@ public class ShipSnapSystem : MonoBehaviour
         else
         {
             bool canBePlaced = true;
-            List<Vector2Int> gridPositionList = _ship.GetGirdOffsetList(_currentGridObject.GetGridPosition());
+            List<Vector2Int> gridPositionList = _ship.GetGirdOffsetList(_currentGridObject.position);
             
             // Object can be placed on the grid if all object positions are empty
             foreach(Vector2Int position in gridPositionList)
             {
                 GridObject gridObject = _grid.GetGridObject(position);
-                if (gridObject == null || gridObject.GetIsFull())
+                if (gridObject == null || gridObject.isFull)
                 {
                     canBePlaced = false;
                     break;
@@ -110,8 +110,8 @@ public class ShipSnapSystem : MonoBehaviour
                 foreach(Vector2Int position in gridPositionList)
                 {   
                     GridObject gridObject = _grid.GetGridObject(position);
-                    gridObject.SetFull(true);
-                    gridObject.SetShipReference(_ship.gameObject);
+                    gridObject.isFull = true;
+                    gridObject.snappedObject = _ship.gameObject;
                 }
                 
                 _shipGameObjectList.Add(_ship);
@@ -163,10 +163,10 @@ public class ShipSnapSystem : MonoBehaviour
         }
         else
         {
-            Vector2Int gridPosition = _currentGridObject.GetGridPosition();
+            Vector2Int gridPosition = _currentGridObject.position;
             if (!gridPosition.Equals(_lastGridPosition))
             {           
-                _ship.Translate(_grid.GetWorldPositionCenter(gridPosition));
+                _ship.Translate(_grid.GridToWorldPositionCenter(gridPosition));
                 _lastGridPosition = gridPosition;
             }
         }

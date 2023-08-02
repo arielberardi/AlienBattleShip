@@ -3,9 +3,9 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] private ShipSnapSystem _shipSnapSystem;
-    [SerializeField] private GridVisual _shipSnapGrid;  
+    [SerializeField] private GridMap _shipSnapGrid;  
     [SerializeField] private ShipAttackSystem _shipAttackSystem;
-    [SerializeField] private GridVisual _shipAttackGrid;
+    [SerializeField] private GridMap _shipAttackGrid;
     
     private Grid2D<GridObject> _grid;
     
@@ -20,11 +20,11 @@ public class PlayerController : MonoBehaviour
             (Grid2D<GridObject> g, int x, int y) => new GridObject(g, x, y)
         );
         
-        _shipSnapGrid.Setup(_grid);
-        _shipSnapSystem.Setup(_grid, team);
+        // _shipSnapGrid.Setup(_grid);
+        // _shipSnapSystem.Setup(_grid, team);
         
-        _shipAttackGrid.Setup(_grid);
-        _shipAttackSystem.Setup(_grid);
+        // _shipAttackGrid.Setup(_grid);
+        // _shipAttackSystem.Setup(_grid);
     }
     
     public void Hide()
@@ -79,7 +79,7 @@ public class PlayerController : MonoBehaviour
     
     private void Update()
     {
-        _shipSnapGrid.Update();
-        _shipAttackGrid.Update();
+        // _shipSnapGrid.Update();
+        // _shipAttackGrid.Update();
     }
 }

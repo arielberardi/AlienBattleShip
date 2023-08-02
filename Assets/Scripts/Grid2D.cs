@@ -8,102 +8,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-/** Example of a GridObject
-public class GridObject
-{
-    private int _x;
-    private int _y;
-    private Grid<GridObject> _grid;
-    
-    private bool _status;
-    
-    public GridObject(Grid<GridObject> grid, int x, int y)
-    {
-        _x = x;
-        _y = y;
-        _grid = grid;
-        _status = false;
-    }
-    
-    public void SetObjectValue(bool value)
-    {
-        _status = value;
-        _grid.TriggerGridObjectChanged(_x, _y);
-    }
-    
-    public bool GetObjectValue()
-    {
-        return _status;
-    }
-    
-    public override string ToString()
-    {
-        return _status.ToString();
-    }
-};
-**/
-
-/** Example of a GridObjectVisual
-public class GridObjectVisual : MonoBehaviour
-{
-    [SerializeField] private Transform _prefab;
-    
-    private Grid<MapGridObject> _grid;
-    private Transform[,] _cellVisual;
-    private bool _requiresUpdate = false;
-
-    public void Setup(Grid<MapGridObject> grid)
-    {
-        _grid = grid;
-        _grid.OnGridObjectChanged.AddListener(Grid_OnGridObjectChanged);
-        
-        _cellVisual = new Transform[_grid.GetWidth(), _grid.GetHeight()];
-        
-        for (int x = 0; x < _grid.GetWidth(); x++)
-        {
-            for (int y = 0; y < _grid.GetHeight(); y++)
-            {
-                Vector3 offset = new Vector3(_grid.GetCellSize()/2, _grid.GetCellSize()/2);
-                Quaternion rotation = Quaternion.identity;
-                
-                _cellVisual[x, y] = Instantiate(_prefab, _grid.GetWorldPosition(x, y) + offset, rotation);
-            }
-        }
-        
-        UpdateCells();
-    } 
-    
-    private void Update()
-    {
-        if (_requiresUpdate)
-        {
-            _requiresUpdate = false;
-            UpdateCells();
-        }
-    }
-    
-    private void UpdateCells()
-    {
-        for (int x = 0; x < _grid.GetWidth(); x++)
-        {
-            for (int y = 0; y < _grid.GetHeight(); y++)
-            {
-                UpdateCell(_cellVisual[x, y],  _grid.GetGridObject(x, y));
-            }
-        }
-    }
-    
-    private void UpdateCell(Transform cell, MapGridObject gridObject)
-    {
-       // Method to update when using different visuals
-    }
-    
-    private void Grid_OnGridObjectChanged(Grid<MapGridObject>.OnGridObjectChangedArgs args)
-    {
-        _requiresUpdate = true;
-    }
-}
-**/
 
 public class Grid2D<TGridObject>
 {
@@ -113,11 +17,11 @@ public class Grid2D<TGridObject>
         public int y;
     };
     
-    private int _width;
-    private int _height;
-    private float _cellSize;
-    private TGridObject[,] _cellArray;
+    public int width { get; private set; }
+    public int height { get; private set; }
+    public float cellSize { get; private set; }
     
+    private TGridObject[,] _cellArray;
     private Vector3 _originPosition;
     private TextMesh[,] _debugTextArray;
     
@@ -125,20 +29,20 @@ public class Grid2D<TGridObject>
 
     // This constructor is expected to received a function of the TGridObject to use 
     // Signature: TGridObject (Grid2D<TGridObject> g, int x, int y)
-    public Grid2D(int width, int height, float cellSize, Vector3 position, 
+    public Grid2D(int w, int h, float cellsize, Vector3 position, 
                   Func<Grid2D<TGridObject>, int, int, TGridObject> createObject)
     {
-        _width = width;
-        _height = height;
-        _cellSize = cellSize;
+        width = width;
+        height = height;
+        cellSize = cellsize;
         _originPosition = position;
     
         OnGridObjectChanged = new UnityEvent<OnGridObjectChangedArgs>();
         
-        _cellArray = new TGridObject[_width, _height];
-        for (int x = 0; x < _width; x++)
+        _cellArray = new TGridObject[width, height];
+        for (int x = 0; x < width; x++)
         {
-            for (int y = 0; y < _height; y++)
+            for (int y = 0; y < height; y++)
             {
                 _cellArray[x, y] = createObject(this, x, y);
             }
@@ -150,22 +54,22 @@ public class Grid2D<TGridObject>
         // It will draw lines and text for each cell
         if (_isDebugEnabled)
         {
-            _debugTextArray = new TextMesh[_width, _height];
+            _debugTextArray = new TextMesh[width, height];
             
-            for (int x = 0; x < _width; x++)
+            for (int x = 0; x < width; x++)
             {
-                for (int y = 0; y < _height; y++)
+                for (int y = 0; y < height; y++)
                 {
-                    Vector3 centerPosition = GetWorldPosition(x, y) + new Vector3(_cellSize / 2, _cellSize / 2, 0);
+                    Vector3 centerPosition = GridToWorldPosition(x, y) + new Vector3(cellSize / 2, cellSize / 2, 0);
                     _debugTextArray[x, y] = CreateDefaultWorldText(_cellArray[x, y].ToString(), centerPosition);
                     
-                    Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x, y + 1), Color.white, 100f);
-                    Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x + 1, y), Color.white, 100f);
+                    Debug.DrawLine(GridToWorldPosition(x, y), GridToWorldPosition(x, y + 1), Color.white, 100f);
+                    Debug.DrawLine(GridToWorldPosition(x, y), GridToWorldPosition(x + 1, y), Color.white, 100f);
                 }
             }
             
-            Debug.DrawLine(GetWorldPosition(0, height), GetWorldPosition(width, height), Color.white, 100f);
-            Debug.DrawLine(GetWorldPosition(width, 0), GetWorldPosition(width, height), Color.white, 100f);
+            Debug.DrawLine(GridToWorldPosition(0, height), GridToWorldPosition(width, height), Color.white, 100f);
+            Debug.DrawLine(GridToWorldPosition(width, 0), GridToWorldPosition(width, height), Color.white, 100f);
             
             OnGridObjectChanged.AddListener((OnGridObjectChangedArgs eventArgs) => {
                 _debugTextArray[eventArgs.x, eventArgs.y].text = _cellArray[eventArgs.x, eventArgs.y]?.ToString();
@@ -173,56 +77,44 @@ public class Grid2D<TGridObject>
         }
     }
     
-    public int GetWidth() {
-        return _width;
-    }
-
-    public int GetHeight() {
-        return _height;
-    }
-
-    public float GetCellSize() {
-        return _cellSize;
+    public Vector3 GridToWorldPosition(int x, int y)
+    {
+        return new Vector3(x, y) * cellSize + _originPosition;
     }
     
-    public Vector3 GetWorldPosition(int x, int y)
+    public Vector3 GridToWorldPosition(Vector2Int gridPosition)
     {
-        return new Vector3(x, y) * _cellSize + _originPosition;
+        return GridToWorldPosition(gridPosition.x, gridPosition.y);   
     }
     
-    public Vector3 GetWorldPosition(Vector2Int gridPosition)
+    public Vector3 GridToWorldPositionCenter(int x, int y)
     {
-        return GetWorldPosition(gridPosition.x, gridPosition.y);   
+        return new Vector3(x, y) * cellSize + _originPosition + new Vector3(cellSize / 2, cellSize / 2);
     }
     
-    public Vector3 GetWorldPositionCenter(int x, int y)
+    public Vector3 GridToWorldPositionCenter(Vector2Int gridPosition)
     {
-        return new Vector3(x, y) * _cellSize + _originPosition + new Vector3(_cellSize/2, _cellSize/2);
+        return GridToWorldPositionCenter(gridPosition.x, gridPosition.y);   
     }
     
-    public Vector3 GetWorldPositionCenter(Vector2Int gridPosition)
+    public void WolrdToGridPosition(Vector3 worldPosition, out int x, out int y)
     {
-        return GetWorldPositionCenter(gridPosition.x, gridPosition.y);   
-    }
-    
-    public void GetGridObjectPosition(Vector3 worldPosition, out int x, out int y)
-    {
-        Vector2Int gridPosition = GetGridObjectPosition(worldPosition);
+        Vector2Int gridPosition = WolrdToGridPosition(worldPosition);
         x = gridPosition.x;
         y = gridPosition.y; 
     }
     
-    public Vector2Int GetGridObjectPosition(Vector3 worldPosition)
+    public Vector2Int WolrdToGridPosition(Vector3 worldPosition)
     {
         return new Vector2Int(
-            Mathf.FloorToInt((worldPosition - _originPosition).x / _cellSize), 
-            Mathf.FloorToInt((worldPosition - _originPosition).y / _cellSize)
+            Mathf.FloorToInt((worldPosition - _originPosition).x / cellSize), 
+            Mathf.FloorToInt((worldPosition - _originPosition).y / cellSize)
         );
     }
     
     public void SetGridObject(int x, int y, TGridObject value)
     {
-        if (x < 0 || x >= _width || y < 0 || y >= _height)
+        if (x < 0 || x >= width || y < 0 || y >= height)
         {
             return;     
         }
@@ -244,12 +136,12 @@ public class Grid2D<TGridObject>
 
     public void SetGridObject(Vector3 worldPosition, TGridObject value)
     {
-        SetGridObject(GetGridObjectPosition(worldPosition), value);
+        SetGridObject(WolrdToGridPosition(worldPosition), value);
     }
     
     public TGridObject GetGridObject(int x, int y)
     {
-        if (x < 0 || x >= _width || y < 0 || y >= _height)
+        if (x < 0 || x >= width || y < 0 || y >= height)
         {
             return default(TGridObject);
         }
@@ -264,7 +156,7 @@ public class Grid2D<TGridObject>
 
     public TGridObject GetGridObject(Vector3 worldPosition)
     {
-        return GetGridObject(GetGridObjectPosition(worldPosition));
+        return GetGridObject(WolrdToGridPosition(worldPosition));
     }
     
     public void TriggerGridObjectChanged(int x, int y)
